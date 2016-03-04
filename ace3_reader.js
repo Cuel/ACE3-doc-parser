@@ -11,15 +11,19 @@ const getLast = arr => arr[arr.length - 1]
 exports.getFunctions = (dir, callback) => {
   let folders = []
   let dirAddons = path.join(dir, 'addons')
-  walk(dirAddons, {no_recurse: true})
+
+  walk(dirAddons, { no_recurse: true })
   .on('error', (dir, e) => callback(e))
   .on('directory', f => folders.push(f))
   .on('end', () => {
+    console.info(chalk.green(`INFO: Found ${folders.length} folders`))
+
     getAll(folders)
     .then(data => {
-      let sorted = data.sort((a, b) => a.prefix.localeCompare(b.prefix))
       let ret = {}
+      let sorted = data.sort((a, b) => a.prefix.localeCompare(b.prefix))
       sorted.forEach(v => ret[v.prefix] = v.functions)
+
       callback(null, ret)
     })
     .catch(callback)
@@ -27,7 +31,6 @@ exports.getFunctions = (dir, callback) => {
 }
 
 function getAll (folders) {
-  console.info(chalk.green(`INFO: Found ${folders.length} folders`))
   return Promise.all(
     folders.map(f => parseComponent(f))
   )
@@ -88,10 +91,10 @@ function getComments (filePath) {
 }
 
 function getFunctionHeaderComments (filePath) {
-  var parsed = []
-  var linesRead = 0
-  var startParse = false
   var lr = new LineReader(filePath, {skipEmptyLines: true})
+  var startParse = false
+  var linesRead = 0
+  var parsed = []
 
   return new Promise((resolve, reject) => {
     lr.on('error', e => {
