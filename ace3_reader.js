@@ -54,9 +54,9 @@ function parseComponent (folderPath) {
 function readFunctionFiles (fnDir, prefix) {
   return new Promise((resolve, reject) => {
     fs.readdir(fnDir, (e, files) => {
-      if (e) {
+      if (e || !files.length) {
         // function folder doesn't exist - thats ok
-        if (e.code === 'ENOENT') return resolve([])
+        if (e.code === 'ENOENT' || !files.length) return resolve([])
         reject(e)
       }
 
