@@ -72,10 +72,13 @@ function readFunctionFiles (dirFn, prefix, options) {
       )
       .then(functions => {
         resolve(functions.map(fnc => {
+          // replace windows 2x backslash to /
+          let file = fnc.filePath.split('addons')[1].replace(/\\/g, '/').substr(1)
           let fncName = path.basename(fnc.filePath)
           let endIdx = fncName.lastIndexOf('.sqf')
           let name = `ACE_${prefix}_${fncName.substring(0, endIdx)}`
-          return { name, text: fnc.text }
+
+          return { name, file, text: fnc.text }
         }))
       })
       .catch(reject)
