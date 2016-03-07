@@ -1,5 +1,5 @@
 {
-  "name": "ACE3-functions-reader",
+  "name": "ace3-functions-reader",
   "version": "0.1.0",
   "description": "File reader for ACE3. Can return only comments or all files, with function names resolved",
   "main": "index.js",
@@ -8,10 +8,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Cuel/ACE3-functions-reader.git"
+    "url": "https://github.com/Cuel/ace3-functions-reader.git"
   },
   "bugs": {
-    "url": "https://github.com/Cuel/ACE3-functions-reader/issues"
+    "url": "https://github.com/Cuel/ace3-functions-reader/issues"
   },
   "keywords": [
     "ace3",
