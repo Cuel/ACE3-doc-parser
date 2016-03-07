@@ -1,5 +1,6 @@
 # ace3-functions-reader
 Parses ACE3 addons folders and functions files for documentation
+
 Can return only comments or entire function files, with function names resolved
 
 ## Usage
