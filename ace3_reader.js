@@ -8,17 +8,20 @@ const LineReader = require('line-by-line')
 
 const getLast = arr => arr[arr.length - 1]
 
-exports.getFunctions = (dir, callback) => {
+exports.read = (dir, options, callback) => {
   let folders = []
   let dirAddons = path.join(dir, 'addons')
-  walk(dirAddons, {no_recurse: true})
+
+  walk(dirAddons, { no_recurse: true })
   .on('error', (dir, e) => callback(e))
   .on('directory', f => folders.push(f))
   .on('end', () => {
-    getAll(folders)
+    if (!folders.length) return callback(new Error('Found no addon folders'))
+
+    readAllFolders(folders, options)
     .then(data => {
-      let sorted = data.sort((a, b) => a.prefix.localeCompare(b.prefix))
       let ret = {}
+      let sorted = data.sort((a, b) => a.prefix.localeCompare(b.prefix))
       sorted.forEach(v => ret[v.prefix] = v.functions)
       callback(null, ret)
     })
@@ -26,20 +29,20 @@ exports.getFunctions = (dir, callback) => {
   })
 }
 
-function getAll (folders) {
+function readAllFolders (folders, options) {
   console.info(chalk.green(`INFO: Found ${folders.length} folders`))
   return Promise.all(
-    folders.map(f => parseComponent(f))
+    folders.map(f => parseComponent(f, options))
   )
 }
 
-function parseComponent (folderPath) {
+function parseComponent (folderPath, options) {
   let prefix = getLast(folderPath.split(path.sep))
+  let dirFn = path.join(folderPath, 'functions')
   let ret = { prefix }
-  let fnDir = path.join(folderPath, 'functions')
 
   return new Promise((resolve, reject) => {
-    readFunctionFiles(fnDir, prefix)
+    readFunctionFiles(dirFn, prefix, options)
     .then(functions => {
       ret.functions = functions
       resolve(ret)
@@ -48,9 +51,9 @@ function parseComponent (folderPath) {
   })
 }
 
-function readFunctionFiles (fnDir, prefix) {
+function readFunctionFiles (dirFn, prefix, options) {
   return new Promise((resolve, reject) => {
-    fs.readdir(fnDir, (e, files) => {
+    fs.readdir(dirFn, (e, files) => {
       if (e) {
         // function folder doesn't exist - thats ok
         if (e.code === 'ENOENT') return resolve([])
@@ -60,18 +63,30 @@ function readFunctionFiles (fnDir, prefix) {
       Promise.all(
         files.filter(v => /^fn.*\.sqf$/i.test(v))
         .sort((a, b) => a.localeCompare(b))
-        .map(v => path.resolve(fnDir, v))
-        .map(v => getComments(v))
+        .map(v => path.resolve(dirFn, v))
+        .map(v => {
+          if (options.onlyComments) return getComments(v)
+          return readFile(v)
+        })
       )
       .then(functions => {
-        resolve(functions.map(v => {
-          let fncName = path.basename(v.filePath)
-          let end = fncName.lastIndexOf('.sqf')
-          let name = `ACE_${prefix}_${fncName.substring(0, end)}`
-          return { name, text: v.text }
+        resolve(functions.map(fnc => {
+          let fncName = path.basename(fnc.filePath)
+          let endIdx = fncName.lastIndexOf('.sqf')
+          let name = `ACE_${prefix}_${fncName.substring(0, endIdx)}`
+          return { name, text: fnc.text }
         }))
       })
       .catch(reject)
+    })
+  })
+}
+
+function readFile (filePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, 'utf8', (e, text) => {
+      if (e) return reject(e)
+      resolve({ filePath, text })
     })
   })
 }

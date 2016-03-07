@@ -1,7 +1,7 @@
 {
   "name": "ace3_doc_parser",
   "version": "0.0.1",
-  "description": "Reads ACE3 documentation and variables",
+  "description": "File reader for ACE3. Can return only comments or all files, with function names resolved",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,21 +1,31 @@
 'use strict'
 
-const fs = require('fs')
 const chalk = require('chalk')
-const reader = require('./ace3_reader')
+const ace3Reader = require('./ace3_reader')
 
-const dir = process.argv.slice(2)[0]
-if (!dir) throw new Error('Argument must be ace3 root folder')
+const defaultOptions = {
+  onlyComments: true
+}
 
-console.time('Get ACE3 documentation')
-reader.getFunctions(dir, (e, functions) => {
-  if (e) throw e
+exports.getFunctions = function (ace3RootDir, options, callback) {
+  if (!ace3RootDir || typeof ace3RootDir !== 'string') {
+    return callback(new Error('Argument must be ace3 root folder'))
+  }
 
-  let k = Object.keys(functions)
-  let amountFn = k.map(v => functions[v].length).reduce((a, b) => a + b, 0)
+  console.time('Get ACE3 documentation')
+  let opts = defaultOptions
+  if (typeof options === 'function') callback = options
+  else opts = Object.assign(defaultOptions, options)
 
-  console.log(chalk.green(`\nFound ${k.length} components, read ${amountFn} functions files`))
-  console.timeEnd('Get ACE3 documentation')
+  ace3Reader.read(ace3RootDir, opts, (err, functions) => {
+    if (err) return callback(err)
 
-  fs.writeFile('./ace3_docs.json', JSON.stringify(functions, null, 2))
-})
+    let k = Object.keys(functions)
+    let amountFn = k.map(v => functions[v].length).reduce((a, b) => a + b, 0)
+
+    console.log(chalk.green(`\nFound ${k.length} components, read ${amountFn} functions files`))
+    console.timeEnd('Get ACE3 documentation')
+
+    callback(null, functions)
+  })
+}
