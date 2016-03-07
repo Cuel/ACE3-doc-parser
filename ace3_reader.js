@@ -16,15 +16,10 @@ exports.read = (dir, options, callback) => {
   .on('error', (dir, e) => callback(e))
   .on('directory', f => folders.push(f))
   .on('end', () => {
-<<<<<<< HEAD
     if (!folders.length) return callback(new Error('Found no addon folders'))
-
-    readAllFolders(folders, options)
-=======
     console.info(chalk.green(`INFO: Found ${folders.length} folders`))
 
-    getAll(folders)
->>>>>>> origin/master
+    readAllFolders(folders, options)
     .then(data => {
       let ret = {}
       let sorted = data.sort((a, b) => a.prefix.localeCompare(b.prefix))
@@ -36,12 +31,7 @@ exports.read = (dir, options, callback) => {
   })
 }
 
-<<<<<<< HEAD
 function readAllFolders (folders, options) {
-  console.info(chalk.green(`INFO: Found ${folders.length} folders`))
-=======
-function getAll (folders) {
->>>>>>> origin/master
   return Promise.all(
     folders.map(f => parseComponent(f, options))
   )
@@ -64,13 +54,8 @@ function parseComponent (folderPath, options) {
 
 function readFunctionFiles (dirFn, prefix, options) {
   return new Promise((resolve, reject) => {
-<<<<<<< HEAD
     fs.readdir(dirFn, (e, files) => {
-      if (e) {
-=======
-    fs.readdir(fnDir, (e, files) => {
       if (e || !files.length) {
->>>>>>> origin/master
         // function folder doesn't exist - thats ok
         if (e.code === 'ENOENT' || !files.length) return resolve([])
         reject(e)
