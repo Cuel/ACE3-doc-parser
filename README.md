@@ -27,13 +27,15 @@ Example:
   "component_name": [
     {
       "name": "ACE_component_fnc_function",
-      "text": "Entire file or only comments"
+      "text": "Entire file or only comments",
+      "file": "component/functions/fn_function.sqf"
     }
   ],
   "component_name2": [
     {
       "name": "ACE_component2_fnc_function",
-      "text": "Entire file or only comments"
+      "text": "Entire file or only comments",
+      "file": "component2/functions/fn_function.sqf"
     }
   ]
 }
