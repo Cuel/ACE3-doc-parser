@@ -76,7 +76,7 @@ function readFunctionFiles (dirFn, prefix, options) {
           let file = fnc.filePath.split('addons')[1].replace(/\\/g, '/').substr(1)
           let fncName = path.basename(fnc.filePath)
           let endIdx = fncName.lastIndexOf('.sqf')
-          let name = `ACE_${prefix}_${fncName.substring(0, endIdx)}`
+          let name = `ace_${prefix}_${fncName.substring(0, endIdx)}`
 
           return { name, file, text: fnc.text }
         }))
