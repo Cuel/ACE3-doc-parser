@@ -1,6 +1,6 @@
 {
   "name": "ace3-functions-reader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "File reader for ACE3. Can return only comments or all files, with function names resolved",
   "main": "index.js",
   "scripts": {
