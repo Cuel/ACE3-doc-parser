@@ -87,10 +87,11 @@ function readFunctionFiles (dirFn, prefix, options) {
 }
 
 function readFile (filePath) {
+  let file = filePath.split('addons')[1].replace(/\\/g, '/').substr(1)
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf8', (e, text) => {
       if (e) return reject(e)
-      resolve({ filePath, text })
+      resolve({ filePath, text, file })
     })
   })
 }
